@@ -1,0 +1,16 @@
+[dataset]
+episodes = 300
+steps_per_episode = 100
+seed = 42
+train_fraction = 0.70
+validation_fraction = 0.15
+
+[model]
+hidden_sizes = [256, 256]
+
+[training]
+epochs = 50
+batch_size = 256
+learning_rate = 0.001
+weight_decay = 0.00001
+seed = 42

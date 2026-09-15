@@ -2,12 +2,13 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
+.test-tmp/
 .coverage
 htmlcov/
 .venv/
 venv/
 dist/
 build/
+artifacts/
 .idea/
 .vscode/
-
