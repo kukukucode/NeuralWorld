@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neuralworld"
+version = "0.1.0"
+description = "A deterministic ground-truth world for neural game-engine research"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "gymnasium>=1.0,<2",
+    "numpy>=1.24,<3",
+    "pygame>=2.5,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+]
+
+[project.scripts]
+neuralworld-play = "game.play:main"
+
+[tool.setuptools]
+packages = ["game"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+

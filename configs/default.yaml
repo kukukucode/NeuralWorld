@@ -1,0 +1,11 @@
+environment:
+  width: 9
+  height: 9
+  max_steps: 200
+  tile_size: 32
+  rewards:
+    step: -0.01
+    collision: -0.04
+    push: 0.02
+    goal: 1.0
+
