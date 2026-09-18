@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neuralworld"
-version = "0.1.0"
-description = "A deterministic ground-truth world for neural game-engine research"
+version = "0.2.0"
+description = "A deterministic game world and learned state dynamics model"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "gymnasium>=1.0,<2",
     "numpy>=1.24,<3",
     "pygame>=2.5,<3",
+    "torch>=2.3,<3",
 ]
 
 [project.optional-dependencies]
@@ -21,11 +22,12 @@ dev = [
 
 [project.scripts]
 neuralworld-play = "game.play:main"
+neuralworld-generate = "data.generate:main"
+neuralworld-one-step = "experiments.one_step:main"
 
-[tool.setuptools]
-packages = ["game"]
+[tool.setuptools.packages.find]
+include = ["game*", "data*", "models*", "experiments*"]
 
 [tool.pytest.ini_options]
 addopts = "-ra"
 testpaths = ["tests"]
-
