@@ -48,6 +48,28 @@ class StateCodec:
         box = np.asarray(observation["box"], dtype=np.float32) / scale
         return np.concatenate((player, box), dtype=np.float32)
 
+    def with_predicted_positions(
+        self, state: torch.Tensor, predicted_positions: torch.Tensor
+    ) -> torch.Tensor:
+        """Build the next model input while carrying Goal and walls forward."""
+
+        if not isinstance(state, torch.Tensor) or not isinstance(
+            predicted_positions, torch.Tensor
+        ):
+            raise TypeError("state and predicted_positions must be torch tensors")
+        if state.ndim < 1 or state.shape[-1] != self.state_size:
+            raise ValueError(f"state must end with {self.state_size} features")
+        expected_shape = (*state.shape[:-1], self.target_size)
+        if tuple(predicted_positions.shape) != expected_shape:
+            raise ValueError(f"predicted_positions must have shape {expected_shape}")
+        if predicted_positions.dtype != state.dtype or predicted_positions.device != state.device:
+            raise ValueError("state and predicted_positions must share dtype and device")
+
+        return torch.cat(
+            (predicted_positions.clamp(0.0, 1.0), state[..., self.target_size :]),
+            dim=-1,
+        )
+
     def target_to_grid(self, targets: np.ndarray) -> np.ndarray:
         scale = np.asarray(
             (self.width - 1, self.height - 1, self.width - 1, self.height - 1),
