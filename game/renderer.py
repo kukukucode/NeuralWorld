@@ -6,6 +6,7 @@ from typing import Any
 
 import numpy as np
 
+from game._version import APP_NAME
 from game.objects import GameState
 
 BACKGROUND = np.asarray((18, 24, 38), dtype=np.uint8)
@@ -56,7 +57,7 @@ class HumanRenderer:
         self.pygame: Any = pygame
         pygame.init()
         self.screen = pygame.display.set_mode((width * tile_size, height * tile_size))
-        pygame.display.set_caption("NeuralWorld v0.1")
+        pygame.display.set_caption(APP_NAME)
         self.clock = pygame.time.Clock()
         self.fps = fps
 

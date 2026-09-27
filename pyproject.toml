@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neuralworld"
-version = "0.2.0"
+dynamic = ["version"]
 description = "A deterministic game world and learned state dynamics model"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,6 +27,9 @@ neuralworld-one-step = "experiments.one_step:main"
 
 [tool.setuptools.packages.find]
 include = ["game*", "data*", "models*", "experiments*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "game._version.__version__"}
 
 [tool.pytest.ini_options]
 addopts = "-ra"
