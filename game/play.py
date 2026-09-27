@@ -1,15 +1,16 @@
-"""Keyboard-controlled entry point for the v0.1 environment."""
+"""Keyboard-controlled entry point for the game environment."""
 
 from __future__ import annotations
 
 import argparse
 
+from game._version import APP_NAME
 from game.env import NeuralWorldEnv
 from game.objects import Action
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Play NeuralWorld v0.1")
+    parser = argparse.ArgumentParser(description=f"Play {APP_NAME}")
     parser.add_argument("--seed", type=int, default=0, help="deterministic reset seed")
     args = parser.parse_args()
 
