@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "gymnasium>=1.0,<2",
+    "matplotlib>=3.8,<4",
     "numpy>=1.24,<3",
     "pygame>=2.5,<3",
     "torch>=2.3,<3",
@@ -24,6 +25,7 @@ dev = [
 neuralworld-play = "game.play:main"
 neuralworld-generate = "data.generate:main"
 neuralworld-one-step = "experiments.one_step:main"
+neuralworld-rollout = "experiments.rollout:main"
 
 [tool.setuptools.packages.find]
 include = ["game*", "data*", "models*", "experiments*"]
