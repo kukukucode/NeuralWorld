@@ -26,9 +26,10 @@ neuralworld-play = "game.play:main"
 neuralworld-generate = "data.generate:main"
 neuralworld-one-step = "experiments.one_step:main"
 neuralworld-rollout = "experiments.rollout:main"
+neuralworld-planning = "experiments.planning:main"
 
 [tool.setuptools.packages.find]
-include = ["game*", "data*", "models*", "experiments*"]
+include = ["game*", "data*", "models*", "experiments*", "planning*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "game._version.__version__"}
