@@ -2,7 +2,7 @@
 
 ゲーム世界の変化をAIに学習させ、将来的に未来予測・行動計画・音楽表現へつなげる実験プロジェクトです。
 
-**v0.4** では、学習したState World Modelの予測を使って、AIが2Dゲームの次の一手を選びます。
+**v0.5** では、学習したState World Modelの未来予測に合わせて、プレイ中のBGMが変わります。
 
 ## できること
 
@@ -12,6 +12,7 @@
 - 操作列に沿って予測を繰り返す（Goal・壁は固定、Player・Boxを更新）
 - 1・5・10・20・50ステップ後の誤差を測定し、グラフを保存
 - Random Shootingで操作列を比較し、ゴールに近づく一手を選択
+- 予測した衝突の兆候やゴールへの接近に合わせてBGMを変え、MIDIに書き出す
 
 ## セットアップ
 
@@ -28,6 +29,8 @@ python -m game.play --seed 42              # ゲームをプレイ（矢印キ�
 python -m experiments.one_step --regenerate # データ生成・学習・1-step評価
 python -m experiments.rollout             # 連続予測の評価・グラフ生成
 python -m experiments.planning            # AIの行動計画とランダム操作を比較
+python -m game.play --seed 42 --music      # 予測に合わせて変化するBGM付きでプレイ
+python -m experiments.music_prediction   # デモの曲を artifacts/v0.5/soundtrack.mid へ出力
 pytest                                     # テスト
 ```
 
@@ -52,7 +55,7 @@ env.close()
 # states: 初期状態を含む11状態。実環境ではなくモデル自身の予測を次の入力に使う。
 ```
 
-アプリ表示は `v0.4.0`。次は適応型音楽（v0.5）へ進む予定です。
+BGMは学習済みモデルで3手先までを見ます。衝突しそうなときはテンポと緊張感を上げ、ゴールが近づくと解決へ向かう和音を使います。予測のばらつきでリズムも変わります。どちらのコマンドも `--music-rules` で設定を上書きできます（JSONの例 `{"danger_threshold": 0.6, "tension_bpm": 108}`）。
 
 ## 研究計画：自己主導探索と経験記憶（MIT Ekoの着想）
 
