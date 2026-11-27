@@ -86,7 +86,10 @@ def test_play_command_starts_audio_and_updates_on_movement(
     checkpoint = save_checkpoint(
         tmp_path / "model.pt", model, codec=codec, training_config=TrainingConfig(epochs=1),
     )
-    monkeypatch.setattr("sys.argv", ["neuralworld-play", "--music", "--music-checkpoint", str(checkpoint)])
+    monkeypatch.setattr(
+        "sys.argv",
+        ["neuralworld-play", "--layout", "maze", "--music", "--music-checkpoint", str(checkpoint)],
+    )
     events = iter([
         [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RIGHT)],
         [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE)],

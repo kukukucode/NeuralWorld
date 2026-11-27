@@ -8,12 +8,17 @@ from pathlib import Path
 
 from game._version import APP_NAME
 from game.env import NeuralWorldEnv
+from game.layouts import CHALLENGE_LAYOUTS
 from game.objects import Action
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=f"Play {APP_NAME}")
     parser.add_argument("--seed", type=int, default=0, help="deterministic reset seed")
+    parser.add_argument(
+        "--layout", choices=tuple(CHALLENGE_LAYOUTS),
+        help="select a challenge map instead of using the seed",
+    )
     parser.add_argument("--music", action="store_true", help="play the adaptive soundtrack")
     parser.add_argument(
         "--music-checkpoint", type=Path, default=Path("artifacts/v0.2/state_mlp.pt"),
@@ -52,7 +57,7 @@ def main() -> None:
         pygame.K_SPACE: Action.NOOP,
     }
 
-    env = NeuralWorldEnv(render_mode="human")
+    env = NeuralWorldEnv(render_mode="human", layout=CHALLENGE_LAYOUTS.get(args.layout))
     soundtrack = None
     try:
         if args.music and (env.width, env.height) != (forecaster.codec.width, forecaster.codec.height):
