@@ -1,4 +1,4 @@
-"""Small curated layouts selected deterministically from the reset seed."""
+"""Curated layouts for experiments and optional player challenges."""
 
 from __future__ import annotations
 
@@ -41,6 +41,32 @@ LAYOUTS: tuple[tuple[str, ...], ...] = (
         "#########",
     ),
 )
+
+# Explicit choices for play. A separate catalog keeps seeded experiments reproducible.
+CHALLENGE_LAYOUTS: dict[str, tuple[str, ...]] = {
+    "maze": (
+        "#########",
+        "#P.#...G#",
+        "#..#.#..#",
+        "##.#.#..#",
+        "#..#.#.##",
+        "#..#.#..#",
+        "#..#.##.#",
+        "#....#B.#",
+        "#########",
+    ),
+    "box-gate": (
+        "#########",
+        "#..##..G#",
+        "#P.##.#.#",
+        "#.###.#.#",
+        "#..B...##",
+        "#..##.#.#",
+        "#..##...#",
+        "#..##...#",
+        "#########",
+    ),
+}
 
 
 def parse_layout(rows: Sequence[str]) -> tuple[GameState, int, int]:
