@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from collections import deque
+
 import pytest
 
 from game import Action, NeuralWorldEnv
-from game.layouts import CHALLENGE_LAYOUTS, parse_layout
+from game.layouts import CHALLENGE_LAYOUTS, generate_maze, parse_layout
+from game.objects import ACTION_DELTAS
 
 
 def test_layout_requires_closed_boundary() -> None:
@@ -39,4 +42,28 @@ def test_challenge_layout_can_be_solved(name: str, route: str, pushes: int) -> N
         assert pushed == pushes
     finally:
         env.close()
+
+
+def test_generated_maze_seed_is_reproducible_and_varies() -> None:
+    first = generate_maze(42)
+    assert first == generate_maze(42)
+    assert first != generate_maze(43)
+
+
+def test_generated_mazes_have_a_path_without_moving_the_box() -> None:
+    for seed in range(100):
+        state, width, height = parse_layout(generate_maze(seed))
+        assert (width, height) == (9, 9)
+        blocked = state.walls | {state.box}
+        reachable = {state.player}
+        pending = deque([state.player])
+        while pending:
+            x, y = pending.popleft()
+            for dx, dy in ACTION_DELTAS.values():
+                neighbor = (x + dx, y + dy)
+                if neighbor not in blocked and neighbor not in reachable:
+                    reachable.add(neighbor)
+                    pending.append(neighbor)
+        assert state.goal in reachable, f"seed {seed}"
+        assert len(reachable) == width * height - len(blocked), f"seed {seed}"
 

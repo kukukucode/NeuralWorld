@@ -5,19 +5,20 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from secrets import randbits
 
 from game._version import APP_NAME
 from game.env import NeuralWorldEnv
-from game.layouts import CHALLENGE_LAYOUTS
+from game.layouts import CHALLENGE_LAYOUTS, generate_maze
 from game.objects import Action
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=f"Play {APP_NAME}")
-    parser.add_argument("--seed", type=int, default=0, help="deterministic reset seed")
+    parser.add_argument("--seed", type=int, help="replay a layout seed (default: 0 or a new random maze seed)")
     parser.add_argument(
-        "--layout", choices=tuple(CHALLENGE_LAYOUTS),
-        help="select a challenge map instead of using the seed",
+        "--layout", choices=(*CHALLENGE_LAYOUTS, "random-maze"),
+        help="select a fixed challenge or a procedurally generated maze",
     )
     parser.add_argument("--music", action="store_true", help="play the adaptive soundtrack")
     parser.add_argument(
@@ -26,6 +27,8 @@ def main() -> None:
     )
     parser.add_argument("--music-rules", type=Path, help="JSON overrides for soundtrack rules")
     args = parser.parse_args()
+    if args.seed is not None and args.seed < 0:
+        parser.error("--seed must be non-negative")
 
     try:
         import pygame
@@ -57,12 +60,21 @@ def main() -> None:
         pygame.K_SPACE: Action.NOOP,
     }
 
-    env = NeuralWorldEnv(render_mode="human", layout=CHALLENGE_LAYOUTS.get(args.layout))
+    seed = args.seed
+    if args.layout == "random-maze":
+        if seed is None:
+            seed = randbits(32)
+        layout = generate_maze(seed)
+        print(f"Maze seed: {seed}")
+    else:
+        seed = 0 if seed is None else seed
+        layout = CHALLENGE_LAYOUTS.get(args.layout)
+    env = NeuralWorldEnv(render_mode="human", layout=layout)
     soundtrack = None
     try:
         if args.music and (env.width, env.height) != (forecaster.codec.width, forecaster.codec.height):
             parser.error("music checkpoint dimensions do not match the game")
-        observation, _ = env.reset(seed=args.seed)
+        observation, _ = env.reset(seed=seed)
         if args.music:
             try:
                 soundtrack = SoundtrackPlayer(rules, forecaster(observation))
@@ -85,7 +97,7 @@ def main() -> None:
                         running = False
                         break
                     elif event.key == pygame.K_r:
-                        observation, _ = env.reset(seed=args.seed)
+                        observation, _ = env.reset(seed=seed)
                         music_dirty = True
                     elif event.key in key_actions:
                         observation, _, terminated, truncated, info = env.step(key_actions[event.key])
@@ -94,7 +106,7 @@ def main() -> None:
                             if terminated and soundtrack is not None:
                                 soundtrack.play_goal()
                             pygame.time.wait(350)
-                            observation, _ = env.reset(seed=args.seed)
+                            observation, _ = env.reset(seed=seed)
                             music_dirty = True
             if running and soundtrack is not None:
                 if music_dirty:
